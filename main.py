@@ -282,6 +282,9 @@ def emailingService(empDictionary):
     pdfName = empName + "_payslip.pdf"
     subject = empName + "'s Payslip"
     empEmail = str(empDictionary.get("Email")).replace("\n", "")
+    if empEmail == "None":
+        print("Mail not sent")
+        return
     msg = MIMEMultipart()
     msg["From"] = EMAIL_ADDRESS
     msg["To"] = empEmail
@@ -329,7 +332,6 @@ def returnPayslipKey(fileName):
         empData = getEmpFromPayslip(key)
         payslipData = returnPayslipData(key)
         createEmpJson(payslipData, empData, key)
-
 
 
 
