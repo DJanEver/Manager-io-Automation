@@ -14,15 +14,13 @@ from reportlab.lib.units import inch
 from heroku import *
 import sys
 
-
 API_LIST_FILENAME = "api-list.json"
 API_KEY_JSON = API_KEY + ".json"
 PAYSLIP_LIST_FILENAME = "payslip-list.json"
 
 
 def fetchApiList():
-    response = requests.get(
-        f"https://{COMPANY_NAME}/api/{API_KEY_JSON}", auth=(USERNAME, PASSWORD))
+    response = requests.get(f"https://{COMPANY_NAME}/api/{API_KEY_JSON}", auth=(USERNAME, PASSWORD))
     return response
 
 
@@ -58,8 +56,7 @@ def fetchEmpInfo(empKey):
 
 def fetchPayslipList():
     payslipListKey = PAYSLIP_LIST_KEY + ".json"
-    response = requests.get(
-        f"https://{COMPANY_NAME}/api/{API_KEY}/{payslipListKey}", auth=(USERNAME, PASSWORD))
+    response = requests.get(f"https://{COMPANY_NAME}/api/{API_KEY}/{payslipListKey}", auth=(USERNAME, PASSWORD))
     return response
 
 
@@ -90,26 +87,43 @@ def populateDictionaries(keyTitle, supKey, key):
     value = fetchPayslipKey(key)
     data = dict(value.json())
     dataItemList = []
+    if (checkForItem(keyTitle, supKey, key)):
+        for keyVal in data.get(keyTitle):
+            keyValJson = keyVal["Item"] + ".json"
+            dataJson = dict(fetchPayslipItems(key, keyValJson).json())
+            dataItemList.append(dataJson.get("Name"))
+            rate = "{:,}".format(keyVal[supKey])
+            dataItemList.append(rate + " JMD")
+        return dataItemList
+    else:
+        return dataItemList
+
+
+def checkForItem(keyTitle, subKey, key):
+    value = fetchPayslipKey(key)
+    data = dict(value.json())
     for keyVal in data.get(keyTitle):
-        keyValJson = keyVal["Item"] + ".json"
-        dataJson = dict(fetchPayslipItems(key, keyValJson).json())
-        dataItemList.append(dataJson.get("Name"))
-        rate = "{:,}".format(keyVal[supKey])
-        dataItemList.append(rate + " JMD")
-    return dataItemList
+        if (dict(keyVal).get("Item") is None or dict(keyVal).get(subKey) is None or len(list(keyVal)) == 0):
+            return False
+    return True
+
+
 
 
 def populateEmpDictionaries(keyTitle, supKey, key):
     value = fetchPayslipKey(key)
     data = dict(value.json())
     dataItemList = []
-    for keyVal in data.get(keyTitle):
-        keyValJson = keyVal["Item"] + ".json"
-        dataJson = dict(fetchPayslipItems(key, keyValJson).json())
-        dataItemList.append(dataJson.get("Name"))
-        rate = "{:,}".format(keyVal[supKey])
-        dataItemList.append(rate)
-    return dataItemList
+    if (checkForItem(keyTitle, supKey, key)):
+        for keyVal in data.get(keyTitle):
+            keyValJson = keyVal["Item"] + ".json"
+            dataJson = dict(fetchPayslipItems(key, keyValJson).json())
+            dataItemList.append(dataJson.get("Name"))
+            rate = "{:,}".format(keyVal[supKey])
+            dataItemList.append(rate)
+        return dataItemList
+    else:
+        return dataItemList
 
 
 def returnPayslipData(key):
@@ -128,10 +142,16 @@ def getEmpFromPayslip(key):
 def createEmpJson(payslipData, empData, key):
     empEList = populateEmpDictionaries("Earnings", "Rate", key)
     empDecList = populateDictionaries("Deductions", "DeductionAmount", key)
-    creatingPdf(empData, payslipData, calEmpGross("Earnings", "Rate", key),
-                deductionCal("Deductions", "DeductionAmount", key),
-                empEList, empDecList)
-    emailingService(empData)
+
+    if(len(empEList) != 0 and len(empDecList) != 0):
+        creatingPdf(empData, payslipData, calEmpGross("Earnings", "Rate", key),
+                    deductionCal("Deductions", "DeductionAmount", key),
+                    empEList, empDecList)
+        emailingService(empData)
+        delEmpPayslip(key)
+        delFiles(empData.get("Name") + "_payslip.pdf")
+        print("Task Completed")
+
 
 
 def pdfTableFormat(empEarningsList, empDecList, empGross, empNet):
@@ -164,15 +184,13 @@ def pdfTableFormat(empEarningsList, empDecList, empGross, empNet):
 
     while (num <= border):
         if (num == 1 and flag == True):
-            borderStyles.append(
-                ("BOX", (1, num), (1, ePos), 1, HexColor("#000000")))
+            borderStyles.append(("BOX", (1, num), (1, ePos), 1, HexColor("#000000")))
             borderStyles.append(("BOTTOMPADDING", (1, num), (1, ePos), 7))
             borderStyles.append(("RIGHTPADDING", (1, num), (1, ePos), 7))
             flag = False
         else:
             if (num > ePos):
-                borderStyles.append(
-                    ("BOX", (1, num), (1, num), 1, HexColor("#000000")))
+                borderStyles.append(("BOX", (1, num), (1, num), 1, HexColor("#000000")))
                 borderStyles.append(("BOTTOMPADDING", (1, num), (1, num), 7))
                 borderStyles.append(("RIGHTPADDING", (1, num), (1, num), 7))
         num += 1
@@ -196,7 +214,7 @@ def creatingPdf(empData, payslipData, empGross, empDec, empElist, empDecList):
     addX = 20
     addY = 746
     story = []
-    frame = Frame(1.1 * inch,  1 * inch,  6 * inch,  8 * inch, )
+    frame = Frame(1.1 * inch, 1 * inch, 6 * inch, 8 * inch)
     empNet = empGross - empDec
     aEmpGross = "{:,}".format(empGross)
     fEmpGross = str(aEmpGross) + " JMD"
@@ -207,8 +225,7 @@ def creatingPdf(empData, payslipData, empGross, empDec, empElist, empDecList):
     pdfName = canvas.Canvas(empData.get("Name") + "_payslip.pdf")
     pdfName.setFont("Helvetica-Bold", 23)
     pdfName.drawString(20, 790, "Payslip")
-    pdfName.drawImage(imgFile, 460, 770, width=105,
-                      preserveAspectRatio=True, mask='auto')
+    pdfName.drawImage(imgFile, 460, 770, width=105, preserveAspectRatio=True, mask='auto')
     pdfName.setFont("Helvetica-Bold", 9)
     pdfName.drawString(20, 760, empData.get("Name"))
     pdfName.setFont("Helvetica", 9)
@@ -218,7 +235,7 @@ def creatingPdf(empData, payslipData, empGross, empDec, empElist, empDecList):
         addY -= 15
     pdfName.setFont("Helvetica", 9)
     headerTable.wrapOn(pdfName, 100, 100)
-    headerTable.drawOn(pdfName, 400, 710,)
+    headerTable.drawOn(pdfName, 400, 710, )
     story.append(table)
     frame.addFromList(story, pdfName)
     pdfName.save()
@@ -308,12 +325,12 @@ def returnPayslipKey(fileName):
     jsonData = json.load(jsonFile)
     for keyVey in jsonData:
         key = keyVey["Key"]
+        checkForItem("Earnings", "Rate", key)
         empData = getEmpFromPayslip(key)
         payslipData = returnPayslipData(key)
         createEmpJson(payslipData, empData, key)
-        delEmpPayslip(key)
-        delFiles(empData.get("Name") + "_payslip.pdf")
-    print("Task Completed")
+
+
 
 
 ###################################################
