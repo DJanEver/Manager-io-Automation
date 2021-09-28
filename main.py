@@ -87,19 +87,29 @@ def populateDictionaries(keyTitle, supKey, key):
     value = fetchPayslipKey(key)
     data = dict(value.json())
     dataItemList = []
-    if (checkForItem(keyTitle, supKey, key)):
-        for keyVal in data.get(keyTitle):
-            keyValJson = keyVal["Item"] + ".json"
-            dataJson = dict(fetchPayslipItems(key, keyValJson).json())
-            dataItemList.append(dataJson.get("Name"))
-            rate = "{:,}".format(keyVal[supKey])
-            dataItemList.append(rate + " JMD")
-        return dataItemList
+    if(checkForItem("Employee", key)):
+        if (checkForItem(keyTitle, key)):
+            for keyVal in data.get(keyTitle):
+                keyValJson = keyVal["Item"] + ".json"
+                dataJson = dict(fetchPayslipItems(key, keyValJson).json())
+                dataItemList.append(dataJson.get("Name"))
+                rate = "{:,}".format(keyVal[supKey])
+                dataItemList.append(rate + " JMD")
+            return dataItemList
+        else:
+            return dataItemList
     else:
         return dataItemList
 
 
-def checkForItem(keyTitle, subKey, key):
+def checkForItem(keyTitle, key):
+    value = fetchPayslipKey(key)
+    data = dict(value.json())
+    if(data.get(keyTitle) is None):
+        return False
+    return True
+
+def checkForEarnings(keyTitle, subKey, key):
     value = fetchPayslipKey(key)
     data = dict(value.json())
     for keyVal in data.get(keyTitle):
@@ -109,22 +119,23 @@ def checkForItem(keyTitle, subKey, key):
 
 
 
-
 def populateEmpDictionaries(keyTitle, supKey, key):
     value = fetchPayslipKey(key)
     data = dict(value.json())
     dataItemList = []
-    if (checkForItem(keyTitle, supKey, key)):
-        for keyVal in data.get(keyTitle):
-            keyValJson = keyVal["Item"] + ".json"
-            dataJson = dict(fetchPayslipItems(key, keyValJson).json())
-            dataItemList.append(dataJson.get("Name"))
-            rate = "{:,}".format(keyVal[supKey])
-            dataItemList.append(rate)
-        return dataItemList
+    if(checkForItem("Employee", key)):
+        if (checkForItem(keyTitle, key)):
+            for keyVal in data.get(keyTitle):
+                keyValJson = keyVal["Item"] + ".json"
+                dataJson = dict(fetchPayslipItems(key, keyValJson).json())
+                dataItemList.append(dataJson.get("Name"))
+                rate = "{:,}".format(keyVal[supKey])
+                dataItemList.append(rate)
+            return dataItemList
+        else:
+            return dataItemList
     else:
         return dataItemList
-
 
 def returnPayslipData(key):
     value = fetchPayslipKey(key)
@@ -150,7 +161,7 @@ def createEmpJson(payslipData, empData, key):
         emailingService(empData)
         delEmpPayslip(key)
         delFiles(empData.get("Name") + "_payslip.pdf")
-        print("Task Completed")
+
 
 
 
@@ -328,11 +339,10 @@ def returnPayslipKey(fileName):
     jsonData = json.load(jsonFile)
     for keyVey in jsonData:
         key = keyVey["Key"]
-        checkForItem("Earnings", "Rate", key)
         empData = getEmpFromPayslip(key)
         payslipData = returnPayslipData(key)
         createEmpJson(payslipData, empData, key)
-
+        print("Task Completed")
 
 
 ###################################################
