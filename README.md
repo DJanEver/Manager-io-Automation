@@ -55,9 +55,9 @@ The local .env file contains credentials for a test account and a test emailing 
 
 Test account:
 ```bash
-MANAGER_USERNAME=administrator
-PASSWORD=6a4a6a4f98
-API_KEY=c29sbHRlY2g
-EMAIL_ADDRESS=hakeem.watson691@gmail.com
-APP_KEY=jiguhcxkauvcoxin
+- MANAGER_USERNAME=administrator
+- PASSWORD=6a4a6a4f98
+- API_KEY=c29sbHRlY2g
+- EMAIL_ADDRESS=hakeem.watson691@gmail.com
+- APP_KEY=jiguhcxkauvcoxin
 ```
