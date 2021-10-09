@@ -53,7 +53,7 @@ In the case a payslip has not been emailed means that the payslips is missing im
 The local .env file contains credentials for a test account and a test emailing account. And not to worry the file is within the .gitignore so it will not be pushed
 
 
-Test account:
+Test account(Expired):
 ```bash
 - MANAGER_USERNAME=administrator
 - PASSWORD=6a4a6a4f98
