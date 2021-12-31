@@ -60,4 +60,5 @@ Test account(Expired):
 - API_KEY=c29sbHRlY2g
 - EMAIL_ADDRESS=hakeem.watson691@gmail.com
 - APP_KEY=jiguhcxkauvcoxin
+- COMPANY_NAME=soltechpro.manager.io
 ```
