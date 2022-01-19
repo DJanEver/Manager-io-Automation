@@ -151,15 +151,15 @@ def getEmpFromPayslip(key):
 
 
 def createEmpJson(payslipData, empData, key):
-    empEList = populateEmpDictionaries("Earnings", "Rate", key)
+    empEList = populateEmpDictionaries("Earnings", "UnitPrice", key)
     empDecList = populateDictionaries("Deductions", "DeductionAmount", key)
 
     if(len(empEList) != 0 and len(empDecList) != 0):
-        creatingPdf(empData, payslipData, calEmpGross("Earnings", "Rate", key),
+        creatingPdf(empData, payslipData, calEmpGross("Earnings", "UnitPrice", key),
                     deductionCal("Deductions", "DeductionAmount", key),
                     empEList, empDecList)
         emailingService(empData)
-        delEmpPayslip(key)
+        # delEmpPayslip(key)
         delFiles(empData.get("Name") + "_payslip.pdf")
 
 
@@ -296,8 +296,9 @@ def emailingService(empDictionary):
     if empEmail == "None":
         print("Mail not sent")
         return
+    emailMail = "Private Person <from@example.com>"
     msg = MIMEMultipart()
-    msg["From"] = EMAIL_ADDRESS
+    msg["From"] = emailMail
     msg["To"] = empEmail
     msg["Subject"] = subject
 
@@ -313,13 +314,13 @@ def emailingService(empDictionary):
                        'attachment', filename=pdfName)
     msg.attach(payload)
 
-    session = smtplib.SMTP('smtp.gmail.com', 587)
-    session.starttls()
-    session.login(EMAIL_ADDRESS, APP_KEY)
+    session = smtplib.SMTP("smtp.mailtrap.io", 2525)
+    # session.starttls()
+    session.login("74b7bef5a0f703", "7f725c37f11b59")
 
     text = msg.as_string()
-    session.sendmail(EMAIL_ADDRESS, empEmail, text)
-    session.quit()
+    session.sendmail(emailMail, empEmail, text)
+    # session.quit()
     print("Mail sent.")
 
 
