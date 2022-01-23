@@ -308,6 +308,8 @@ def calEmpGross(keyTitle, supKey, key):
     return valueNew
 
 
+
+
 def deductionCal(keyTitle, supKey, key):
     valueNew = 0
     value = fetchPayslipKey(key)
