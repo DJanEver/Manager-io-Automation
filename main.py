@@ -257,6 +257,7 @@ def addressTable(payslipData):
         ["Date", "Solutech Innovation Ltd."],
         [payslipData.get("Date"), "21 Connolley Drive"],
         ["", "Kingston 4"],
+
         ["", "TRN 002 082 080"],
 
     ]
