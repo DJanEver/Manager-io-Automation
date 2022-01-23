@@ -12,7 +12,9 @@ from email.mime.base import MIMEBase
 from email import encoders
 from reportlab.lib.units import inch
 from heroku import *
+import datetime
 import sys
+
 
 API_LIST_FILENAME = "api-list.json"
 API_KEY_JSON = API_KEY + ".json"
@@ -87,7 +89,7 @@ def populateDictionaries(keyTitle, supKey, key):
     value = fetchPayslipKey(key)
     data = dict(value.json())
     dataItemList = []
-    if(checkForItem("Employee", key)):
+    if (checkForItem("Employee", key)):
         if (checkForItem(keyTitle, key)):
             for keyVal in data.get(keyTitle):
                 keyValJson = keyVal["Item"] + ".json"
@@ -102,12 +104,40 @@ def populateDictionaries(keyTitle, supKey, key):
         return dataItemList
 
 
+def checkPayslipDate(payslipData):
+    payslipDate = payslipData.get("Date").split("-")
+    currentDate = datetime.date.today()
+    year = currentDate.year
+    month = currentDate.month
+    count = 0
+    flag = False
+    secFlag = False
+    monthString = str(month)
+    newMonthString = ""
+
+    if(len(monthString) == 1):
+        newMonthString = '0' + monthString
+        secFlag = True
+    while not flag:
+        if payslipDate[count] == str(year):
+            count += 1
+            currentString = newMonthString if secFlag else monthString
+            if payslipDate[count] == currentString:
+                flag = True
+            else:
+                break
+        else:
+            break
+    return flag
+
+
 def checkForItem(keyTitle, key):
     value = fetchPayslipKey(key)
     data = dict(value.json())
-    if(data.get(keyTitle) is None):
+    if (data.get(keyTitle) is None):
         return False
     return True
+
 
 def checkForEarnings(keyTitle, subKey, key):
     value = fetchPayslipKey(key)
@@ -118,12 +148,11 @@ def checkForEarnings(keyTitle, subKey, key):
     return True
 
 
-
 def populateEmpDictionaries(keyTitle, supKey, key):
     value = fetchPayslipKey(key)
     data = dict(value.json())
     dataItemList = []
-    if(checkForItem("Employee", key)):
+    if (checkForItem("Employee", key)):
         if (checkForItem(keyTitle, key)):
             for keyVal in data.get(keyTitle):
                 keyValJson = keyVal["Item"] + ".json"
@@ -136,6 +165,7 @@ def populateEmpDictionaries(keyTitle, supKey, key):
             return dataItemList
     else:
         return dataItemList
+
 
 def returnPayslipData(key):
     value = fetchPayslipKey(key)
@@ -154,15 +184,13 @@ def createEmpJson(payslipData, empData, key):
     empEList = populateEmpDictionaries("Earnings", "UnitPrice", key)
     empDecList = populateDictionaries("Deductions", "DeductionAmount", key)
 
-    if(len(empEList) != 0 and len(empDecList) != 0):
+    if (len(empEList) != 0 and len(empDecList) != 0):
         creatingPdf(empData, payslipData, calEmpGross("Earnings", "UnitPrice", key),
                     deductionCal("Deductions", "DeductionAmount", key),
                     empEList, empDecList)
         emailingService(empData)
         # delEmpPayslip(key)
         delFiles(empData.get("Name") + "_payslip.pdf")
-
-
 
 
 def pdfTableFormat(empEarningsList, empDecList, empGross, empNet):
@@ -343,8 +371,10 @@ def returnPayslipKey(fileName):
         key = keyVey["Key"]
         empData = getEmpFromPayslip(key)
         payslipData = returnPayslipData(key)
-        createEmpJson(payslipData, empData, key)
-        print("Task Completed")
+        # Check date here
+        if (checkPayslipDate(payslipData)):
+            createEmpJson(payslipData, empData, key)
+            print("Task Completed")
 
 
 ###################################################
