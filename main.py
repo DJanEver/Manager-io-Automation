@@ -325,9 +325,9 @@ def emailingService(empDictionary):
     if empEmail == "None":
         print("Mail not sent")
         return
-    emailMail = "Private Person <from@example.com>"
+
     msg = MIMEMultipart()
-    msg["From"] = emailMail
+    msg["From"] = EMAIL_ADDRESS
     msg["To"] = empEmail
     msg["Subject"] = subject
 
@@ -343,13 +343,13 @@ def emailingService(empDictionary):
                        'attachment', filename=pdfName)
     msg.attach(payload)
 
-    session = smtplib.SMTP("smtp.mailtrap.io", 2525)
-    # session.starttls()
-    session.login("74b7bef5a0f703", "7f725c37f11b59")
+    session = smtplib.SMTP('smtp.gmail.com', 587)
+    session.starttls()
+    session.login(EMAIL_ADDRESS, APP_KEY)
 
     text = msg.as_string()
-    session.sendmail(emailMail, empEmail, text)
-    # session.quit()
+    session.sendmail(EMAIL_ADDRESS, empEmail, text)
+    session.quit()
     print("Mail sent.")
 
 
