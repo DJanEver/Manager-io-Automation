@@ -370,11 +370,13 @@ def delFiles(empData):
 def returnPayslipKey(fileName):
     jsonFile = open(fileName)
     jsonData = json.load(jsonFile)
-    print(jsonData)
     for keyVey in jsonData:
         key = keyVey["Key"]
+        print(key)
         empData = getEmpFromPayslip(key)
+        print(empData)
         payslipData = returnPayslipData(key)
+        print(payslipData)
         # Check date here
         if (checkPayslipDate(payslipData)):
             createEmpJson(payslipData, empData, key)
