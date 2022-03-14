@@ -350,7 +350,6 @@ def emailingService(empDictionary):
     session.login(EMAIL_ADDRESS, APP_KEY)
 
     text = msg.as_string()
-    print(text)
     session.sendmail(FROM_EMAIL, empEmail, text)
     session.quit()
     print("Mail sent.")
