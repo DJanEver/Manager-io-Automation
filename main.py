@@ -59,9 +59,7 @@ def fetchEmpInfo(empKey):
 
 def fetchPayslipList():
     payslipListKey = PAYSLIP_LIST_KEY + ".json"
-    print(payslipListKey) 
     response = requests.get(f"https://{COMPANY_NAME}/api/{API_KEY}/{payslipListKey}", auth=(USERNAME, PASSWORD))
-    print(response)
     return response
 
 
@@ -388,8 +386,8 @@ def returnPayslipKey(fileName):
 ###################################################
 def main():
     returnPayslipKey(PAYSLIP_LIST_FILENAME)
-    os.remove(PAYSLIP_LIST_FILENAME)
-    os.remove(API_LIST_FILENAME)
+    #os.remove(PAYSLIP_LIST_FILENAME)
+    #os.remove(API_LIST_FILENAME)
 
 
 main()
