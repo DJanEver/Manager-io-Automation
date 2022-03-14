@@ -23,7 +23,6 @@ PAYSLIP_LIST_FILENAME = "payslip-list.json"
 
 def fetchApiList():
     response = requests.get(f"https://{COMPANY_NAME}/api/{API_KEY_JSON}", auth=(USERNAME, PASSWORD))
-    print(response)
     return response
 
 
@@ -96,8 +95,8 @@ def populateDictionaries(keyTitle, supKey, key):
                 keyValJson = keyVal["Item"] + ".json"
                 dataJson = dict(fetchPayslipItems(key, keyValJson).json())
                 dataItemList.append(dataJson.get("Name"))
-                rate = "{:,}".format(keyVal[supKey])
-                dataItemList.append(rate + " JMD")
+                rate = "{:+,.2f}".format(keyVal[supKey])
+                dataItemList.append(rate)
             return dataItemList
         else:
             return dataItemList
@@ -256,10 +255,10 @@ def creatingPdf(empData, payslipData, empGross, empDec, empElist, empDecList):
     story = []
     frame = Frame(1.1 * inch, 1 * inch, 6 * inch, 8 * inch)
     empNet = empGross - empDec
-    aEmpGross = "{:,}".format(empGross)
-    fEmpGross = str(aEmpGross) + " JMD"
-    aEmpNet = "{:,}".format(empNet)
-    fEmpNet = str(aEmpNet) + " JMD"
+    aEmpGross = "{:,.2f}".format(empGross)
+    fEmpGross = str(aEmpGross)
+    aEmpNet = "{:,.2f}".format(empNet)
+    fEmpNet = str(aEmpNet)
     table = pdfTableFormat(empElist, empDecList, fEmpGross, fEmpNet)
     headerTable = addressTable(payslipData)
     pdfName = canvas.Canvas(empData.get("Name") + "_payslip.pdf")
@@ -374,9 +373,7 @@ def returnPayslipKey(fileName):
         key = keyVey["Key"]
         print(key)
         empData = getEmpFromPayslip(key)
-        print(empData)
         payslipData = returnPayslipData(key)
-        print(payslipData)
         # Check date here
         if (checkPayslipDate(payslipData)):
             createEmpJson(payslipData, empData, key)
@@ -388,8 +385,8 @@ def returnPayslipKey(fileName):
 ###################################################
 def main():
     returnPayslipKey(PAYSLIP_LIST_FILENAME)
-    #os.remove(PAYSLIP_LIST_FILENAME)
-    #os.remove(API_LIST_FILENAME)
+    os.remove(PAYSLIP_LIST_FILENAME)
+    os.remove(API_LIST_FILENAME)
 
 
 main()
