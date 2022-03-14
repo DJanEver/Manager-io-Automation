@@ -329,7 +329,7 @@ def emailingService(empDictionary):
         return
 
     msg = MIMEMultipart()
-    msg["From"] = EMAIL_ADDRESS
+    msg["From"] = FROM_EMAIL
     msg["To"] = empEmail
     msg["Subject"] = subject
 
