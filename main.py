@@ -22,6 +22,10 @@ PAYSLIP_LIST_FILENAME = "payslip-list.json"
 
 
 def fetchApiList():
+    URL = f"https://{COMPANY_NAME}/api/{API_KEY_JSON}"
+    print(URL)
+    print(USERNAME)
+    print(PASSWORD)
     response = requests.get(f"https://{COMPANY_NAME}/api/{API_KEY_JSON}", auth=(USERNAME, PASSWORD))
     return response
 
