@@ -1,5 +1,4 @@
 import requests
-from requests.auth import HTTPBasicAuth
 import json
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Table, Frame
@@ -23,7 +22,7 @@ PAYSLIP_LIST_FILENAME = "payslip-list.json"
 
 
 def fetchApiList():
-    response = requests.get(f"https://{COMPANY_NAME}/api/{API_KEY_JSON}", auth=HTTPBasicAuth(USERNAME, PASSWORD))
+    response = requests.get(f"https://{COMPANY_NAME}/api/{API_KEY_JSON}", auth=(USERNAME, PASSWORD))
     print(response)
     return response
 
@@ -60,7 +59,9 @@ def fetchEmpInfo(empKey):
 
 def fetchPayslipList():
     payslipListKey = PAYSLIP_LIST_KEY + ".json"
+    print(payslipListKey) 
     response = requests.get(f"https://{COMPANY_NAME}/api/{API_KEY}/{payslipListKey}", auth=(USERNAME, PASSWORD))
+    print(response)
     return response
 
 
