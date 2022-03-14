@@ -95,8 +95,8 @@ def populateDictionaries(keyTitle, supKey, key):
                 keyValJson = keyVal["Item"] + ".json"
                 dataJson = dict(fetchPayslipItems(key, keyValJson).json())
                 dataItemList.append(dataJson.get("Name"))
-                rate = "{:,}".format(keyVal[supKey])
-                dataItemList.append(rate + " JMD")
+                rate = "{:,.2f}".format(keyVal[supKey])
+                dataItemList.append(rate)
             return dataItemList
         else:
             return dataItemList
@@ -158,7 +158,7 @@ def populateEmpDictionaries(keyTitle, supKey, key):
                 keyValJson = keyVal["Item"] + ".json"
                 dataJson = dict(fetchPayslipItems(key, keyValJson).json())
                 dataItemList.append(dataJson.get("Name"))
-                rate = "{:,}".format(keyVal[supKey])
+                rate = "{:,.2f}".format(keyVal[supKey])
                 dataItemList.append(rate)
             return dataItemList
         else:
@@ -255,10 +255,10 @@ def creatingPdf(empData, payslipData, empGross, empDec, empElist, empDecList):
     story = []
     frame = Frame(1.1 * inch, 1 * inch, 6 * inch, 8 * inch)
     empNet = empGross - empDec
-    aEmpGross = "{:,}".format(empGross)
-    fEmpGross = str(aEmpGross) + " JMD"
-    aEmpNet = "{:,}".format(empNet)
-    fEmpNet = str(aEmpNet) + " JMD"
+    aEmpGross = "{:,.2f}".format(empGross)
+    fEmpGross = str(aEmpGross)
+    aEmpNet = "{:,.2f}".format(empNet)
+    fEmpNet = str(aEmpNet)
     table = pdfTableFormat(empElist, empDecList, fEmpGross, fEmpNet)
     headerTable = addressTable(payslipData)
     pdfName = canvas.Canvas(empData.get("Name") + "_payslip.pdf")
@@ -329,7 +329,7 @@ def emailingService(empDictionary):
         return
 
     msg = MIMEMultipart()
-    msg["From"] = EMAIL_ADDRESS
+    msg["From"] = FROM_EMAIL
     msg["To"] = empEmail
     msg["Subject"] = subject
 
@@ -350,7 +350,7 @@ def emailingService(empDictionary):
     session.login(EMAIL_ADDRESS, APP_KEY)
 
     text = msg.as_string()
-    session.sendmail(EMAIL_ADDRESS, empEmail, text)
+    session.sendmail(FROM_EMAIL, empEmail, text)
     session.quit()
     print("Mail sent.")
 
