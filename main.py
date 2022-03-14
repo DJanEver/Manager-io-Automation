@@ -369,6 +369,7 @@ def delFiles(empData):
 def returnPayslipKey(fileName):
     jsonFile = open(fileName)
     jsonData = json.load(jsonFile)
+    print(jsonData)
     for keyVey in jsonData:
         key = keyVey["Key"]
         empData = getEmpFromPayslip(key)
