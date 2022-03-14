@@ -158,7 +158,7 @@ def populateEmpDictionaries(keyTitle, supKey, key):
                 keyValJson = keyVal["Item"] + ".json"
                 dataJson = dict(fetchPayslipItems(key, keyValJson).json())
                 dataItemList.append(dataJson.get("Name"))
-                rate = "{:,}".format(keyVal[supKey])
+                rate = "{:,.2f}".format(keyVal[supKey])
                 dataItemList.append(rate)
             return dataItemList
         else:
