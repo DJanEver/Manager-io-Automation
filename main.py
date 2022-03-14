@@ -371,7 +371,6 @@ def returnPayslipKey(fileName):
     jsonData = json.load(jsonFile)
     for keyVey in jsonData:
         key = keyVey["Key"]
-        print(key)
         empData = getEmpFromPayslip(key)
         payslipData = returnPayslipData(key)
         # Check date here
