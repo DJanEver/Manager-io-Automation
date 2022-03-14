@@ -95,7 +95,7 @@ def populateDictionaries(keyTitle, supKey, key):
                 keyValJson = keyVal["Item"] + ".json"
                 dataJson = dict(fetchPayslipItems(key, keyValJson).json())
                 dataItemList.append(dataJson.get("Name"))
-                rate = "{:+,.2f}".format(keyVal[supKey])
+                rate = "{:,.2f}".format(keyVal[supKey])
                 dataItemList.append(rate)
             return dataItemList
         else:
@@ -350,7 +350,7 @@ def emailingService(empDictionary):
     session.login(EMAIL_ADDRESS, APP_KEY)
 
     text = msg.as_string()
-    session.sendmail(EMAIL_ADDRESS, empEmail, text)
+    session.sendmail(FROM_EMAIL, empEmail, text)
     session.quit()
     print("Mail sent.")
 
