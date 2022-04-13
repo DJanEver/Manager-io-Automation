@@ -111,7 +111,7 @@ def populateDictionaries(keyTitle, supKey, key):
 
 def checkPayslipDate(payslipData):
     payslipDate = payslipData.get("Date").split("-")
-    print(PAYROLL_DATE+" vs "+payslipData.get("Date"))
+    print(PAYROLL_DATE.strftime('%Y-%m-%d')+" vs "+payslipData.get("Date"))
     currentDate = PAYROLL_DATE #datetime.date.today()
     year = PAYROLL_DATE.year #currentDate.year
     month = PAYROLL_DATE.month #currentDate.month
