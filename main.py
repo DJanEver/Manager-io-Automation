@@ -92,16 +92,16 @@ def populateDictionaries(keyTitle, supKey, key):
     dataItemList = []
     if (checkForItem("Employee", key)):
         if (checkForItem(keyTitle, key)):
-            if(data.get(keyTitle).count("Item") > 0):
-                for keyVal in data.get(keyTitle):
+            for keyVal in data.get(keyTitle):
+                try:
                     keyValJson = keyVal["Item"] + ".json"
                     dataJson = dict(fetchPayslipItems(key, keyValJson).json())
                     dataItemList.append(dataJson.get("Name"))
                     rate = "{:,.2f}".format(keyVal[supKey])
                     dataItemList.append(rate)
-                return dataItemList
-            else:
-                return dataItemList
+                except:
+                    print("Unable to append item for "+keyTitle + " with key=" + key)
+            return dataItemList
         else:
             return dataItemList
     else:
