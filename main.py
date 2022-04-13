@@ -19,6 +19,7 @@ import sys
 API_LIST_FILENAME = "api-list.json"
 API_KEY_JSON = API_KEY + ".json"
 PAYSLIP_LIST_FILENAME = "payslip-list.json"
+PAYROLL_DATE=datetime.today()
 
 
 def fetchApiList():
@@ -110,9 +111,9 @@ def populateDictionaries(keyTitle, supKey, key):
 
 def checkPayslipDate(payslipData):
     payslipDate = payslipData.get("Date").split("-")
-    currentDate = datetime.date.today()
-    year = currentDate.year
-    month = currentDate.month
+    currentDate = PAYROLL_DATE #datetime.date.today()
+    year = PAYROLL_DATE.year #currentDate.year
+    month = PAYROLL_DATE.month #currentDate.month
     count = 0
     flag = False
     secFlag = False
@@ -400,6 +401,8 @@ def returnPayslipKey(fileName):
 # Main
 ###################################################
 def main():
+    if len(args) == 2 and args[0] == '-month':
+        PAYROLL_DATE=args[1]
     returnPayslipKey(PAYSLIP_LIST_FILENAME)
     os.remove(PAYSLIP_LIST_FILENAME)
     os.remove(API_LIST_FILENAME)
