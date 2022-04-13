@@ -19,7 +19,7 @@ import sys
 API_LIST_FILENAME = "api-list.json"
 API_KEY_JSON = API_KEY + ".json"
 PAYSLIP_LIST_FILENAME = "payslip-list.json"
-PAYROLL_DATE=datetime.today()
+PAYROLL_DATE=datetime.date.today()
 
 
 def fetchApiList():
@@ -401,7 +401,7 @@ def returnPayslipKey(fileName):
 # Main
 ###################################################
 def main():
-    if len(args) == 2 and args[0] == '-month':
+    if len(args) == 2 and args[0] == '-payrolldate':
         PAYROLL_DATE=args[1]
     returnPayslipKey(PAYSLIP_LIST_FILENAME)
     os.remove(PAYSLIP_LIST_FILENAME)
