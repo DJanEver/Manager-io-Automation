@@ -404,6 +404,7 @@ def returnPayslipKey(fileName):
 def main():
     args = sys.argv[1:]
     if len(args) == 2 and args[0] == '-payrolldate':
+        global PAYROLL_DATE
         PAYROLL_DATE=args[1]
         print(PAYROLL_DATE)
     returnPayslipKey(PAYSLIP_LIST_FILENAME)
