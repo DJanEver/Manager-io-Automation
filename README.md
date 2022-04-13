@@ -9,6 +9,7 @@
 - EMAIL_ADDRESS
 - APP_KEY
 - COMPANY_NAME
+- FROM_EMAIL
 ```
 
 The MANAGER_USERNAME represents the username for the manager.io account.
@@ -40,12 +41,18 @@ The APP_KEY otherwise known as the app password is what is used to keep the emai
 The COMPANY_NAME is the fill name of the URL example:
     your manager.io url: https://solltech.manager.io/api
         COMPANY_NAME = solltech.manager.io
+        
+The FROM_EMAIL is the email that will appear as the sender (not working)       
     
 
 ## Usage
 After setting up the ENV Variables in heroku simply run the application.
 
 ## NOTE!
+
+Optional command line argument -payrolldate YYYY-MM-DD e.g.  python main.py 2022-05-31. This will generate and email payslips within the month of the date in the argument passed...
+
+
 After the application has ran all payslips that have been emailed will be deleted.
 
 In the case a payslip has not been emailed means that the payslips is missing important data such as Contributions.
