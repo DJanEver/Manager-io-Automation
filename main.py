@@ -92,14 +92,16 @@ def populateDictionaries(keyTitle, supKey, key):
     dataItemList = []
     if (checkForItem("Employee", key)):
         if (checkForItem(keyTitle, key)):
-            print(data.get(keyTitle))
-            for keyVal in data.get(keyTitle):
-                keyValJson = keyVal["Item"] + ".json"
-                dataJson = dict(fetchPayslipItems(key, keyValJson).json())
-                dataItemList.append(dataJson.get("Name"))
-                rate = "{:,.2f}".format(keyVal[supKey])
-                dataItemList.append(rate)
-            return dataItemList
+            if(data.get(keyTitle).len() > 0):
+                for keyVal in data.get(keyTitle):
+                    keyValJson = keyVal["Item"] + ".json"
+                    dataJson = dict(fetchPayslipItems(key, keyValJson).json())
+                    dataItemList.append(dataJson.get("Name"))
+                    rate = "{:,.2f}".format(keyVal[supKey])
+                    dataItemList.append(rate)
+                return dataItemList
+            else:
+                return dataItemList
         else:
             return dataItemList
     else:
