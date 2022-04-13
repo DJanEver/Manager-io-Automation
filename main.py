@@ -202,8 +202,6 @@ def pdfTableFormat(empEarningsList, empDecList, empGross, empNet):
     splitInto = len(empEarningsList) / 2
     splits = np.array_split(empEarningsList, splitInto)
 
-    splitIntoDec = len(empDecList) / 2
-    splitsDec = np.array_split(empDecList, splitIntoDec)
     border = 2
     ePos = 0
     #
@@ -215,9 +213,20 @@ def pdfTableFormat(empEarningsList, empDecList, empGross, empNet):
         border += 1
         ePos += 1
     empPayslipTable.append(["Gross pay", empGross])
-    for array in splitsDec:
-        empPayslipTable.append(list(array))
-        border += 1
+    
+    
+    splitIntoDec = len(empDecList) / 2
+    
+    try:
+        splitsDec = np.array_split(empDecList, splitIntoDec)
+    
+        for array in splitsDec:
+            empPayslipTable.append(list(array))
+            border += 1
+    except:
+        print("Unable to append deductions to table")
+        
+        
     empPayslipTable.append(["Net pay", empNet])
 
     #
