@@ -320,7 +320,10 @@ def deductionCal(keyTitle, supKey, key):
     value = fetchPayslipKey(key)
     data = dict(value.json())
     for keyVal in data.get(keyTitle):
-        valueNew = keyVal[supKey] + valueNew
+        try:
+            valueNew = keyVal[supKey] + valueNew
+        except:
+            print("Unable to get "+keyTitle+" key="+supKey)
     return valueNew
 
 
