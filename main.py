@@ -19,6 +19,7 @@ import sys
 API_LIST_FILENAME = "api-list.json"
 API_KEY_JSON = API_KEY + ".json"
 PAYSLIP_LIST_FILENAME = "payslip-list.json"
+PAYROLL_DATE=datetime.date.today()
 
 
 def fetchApiList():
@@ -93,11 +94,14 @@ def populateDictionaries(keyTitle, supKey, key):
     if (checkForItem("Employee", key)):
         if (checkForItem(keyTitle, key)):
             for keyVal in data.get(keyTitle):
-                keyValJson = keyVal["Item"] + ".json"
-                dataJson = dict(fetchPayslipItems(key, keyValJson).json())
-                dataItemList.append(dataJson.get("Name"))
-                rate = "{:,.2f}".format(keyVal[supKey])
-                dataItemList.append(rate)
+                try:
+                    keyValJson = keyVal["Item"] + ".json"
+                    dataJson = dict(fetchPayslipItems(key, keyValJson).json())
+                    dataItemList.append(dataJson.get("Name"))
+                    rate = "{:,.2f}".format(keyVal[supKey])
+                    dataItemList.append(rate)
+                except:
+                    print("Unable to append item for "+keyTitle + " with key=" + key)
             return dataItemList
         else:
             return dataItemList
@@ -107,9 +111,9 @@ def populateDictionaries(keyTitle, supKey, key):
 
 def checkPayslipDate(payslipData):
     payslipDate = payslipData.get("Date").split("-")
-    currentDate = datetime.date.today()
-    year = currentDate.year
-    month = currentDate.month
+    currentDate = PAYROLL_DATE #datetime.date.today()
+    year = PAYROLL_DATE.year #currentDate.year
+    month = PAYROLL_DATE.month #currentDate.month
     count = 0
     flag = False
     secFlag = False
@@ -185,7 +189,8 @@ def createEmpJson(payslipData, empData, key):
     empEList = populateEmpDictionaries("Earnings", "UnitPrice", key)
     empDecList = populateDictionaries("Deductions", "DeductionAmount", key)
 
-    if (len(empEList) != 0 and len(empDecList) != 0):
+    #if (len(empEList) != 0 and len(empDecList) != 0):
+    if (len(empEList) != 0):
         creatingPdf(empData, payslipData, calEmpGross("Earnings", "UnitPrice", key),
                     deductionCal("Deductions", "DeductionAmount", key),
                     empEList, empDecList)
@@ -198,8 +203,6 @@ def pdfTableFormat(empEarningsList, empDecList, empGross, empNet):
     splitInto = len(empEarningsList) / 2
     splits = np.array_split(empEarningsList, splitInto)
 
-    splitIntoDec = len(empDecList) / 2
-    splitsDec = np.array_split(empDecList, splitIntoDec)
     border = 2
     ePos = 0
     #
@@ -211,9 +214,20 @@ def pdfTableFormat(empEarningsList, empDecList, empGross, empNet):
         border += 1
         ePos += 1
     empPayslipTable.append(["Gross pay", empGross])
-    for array in splitsDec:
-        empPayslipTable.append(list(array))
-        border += 1
+    
+    
+    splitIntoDec = len(empDecList) / 2
+    
+    try:
+        splitsDec = np.array_split(empDecList, splitIntoDec)
+    
+        for array in splitsDec:
+            empPayslipTable.append(list(array))
+            border += 1
+    except:
+        print("Unable to append deductions to table")
+        
+        
     empPayslipTable.append(["Net pay", empNet])
 
     #
@@ -316,7 +330,10 @@ def deductionCal(keyTitle, supKey, key):
     value = fetchPayslipKey(key)
     data = dict(value.json())
     for keyVal in data.get(keyTitle):
-        valueNew = keyVal[supKey] + valueNew
+        try:
+            valueNew = keyVal[supKey] + valueNew
+        except:
+            print("Unable to get "+keyTitle+" key="+supKey)
     return valueNew
 
 
@@ -384,6 +401,10 @@ def returnPayslipKey(fileName):
 # Main
 ###################################################
 def main():
+    args = sys.argv[1:]
+    if len(args) == 2 and args[0] == '-payrolldate':
+        global PAYROLL_DATE
+        PAYROLL_DATE=datetime.datetime.strptime(args[1],'%Y-%m-%d')
     returnPayslipKey(PAYSLIP_LIST_FILENAME)
     os.remove(PAYSLIP_LIST_FILENAME)
     os.remove(API_LIST_FILENAME)
