@@ -1,0 +1,44 @@
+<html><head><meta http-equiv="Content-Type" content="text /html; charset=UTF-8" /><title>Manager Cloud</title><link rel="shortcut icon" href="//www.manager.io/favicon.ico"><link rel="apple-touch-icon" href="//www.manager.io/apple-touch-icon.png"><link rel="stylesheet" type="text/css" href="//stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" /><script src="https://kit.fontawesome.com/0b64f5ae8f.js" crossorigin="anonymous"></script></head><body class="bg-light"><div class="m-4 text-center d-print-none"><a href="http://soltechpro.manager.io"><img src="//www.manager.io/apple-touch-icon.png" style="width: 118px; height: 120px" /></a><br /><span style="font-size: 3rem">Cloud</span></div><div class="container"><div class="row justify-content-center"><div class="col-12 col-md-9 col-lg-6"><div class="card"><div class="card-header font-weight-bold">Your Subscription Has Been Cancelled</div><div class="card-body"><p class="card-text font-weight-bold text-center">soltechpro.manager.io</p><p class="card-text text-center">To restore your access, please start new subscription.</p><p class="card-text"><a href="//cloud.manager.io/login?Cgpzb2x0ZWNocHJvEAE" class="btn btn-primary btn-lg font-weight-bold btn-block">Start Subscription</a></p><p class="text-danger text-center d-none" id="invalid-feedback"></p></div></div></div></div></div><p class="text-muted text-center m-3 small d-print-none">Please contact us at <b>support@manager.io</b> if you require assistance.</p><script>
+let forms = document.getElementsByTagName('form');
+for (i = 0; i < forms.length; i++)
+{
+    forms[i].addEventListener('submit', function(e) { e.preventDefault(); });
+}
+
+let buttons = document.getElementsByTagName('button');
+for (i = 0; i < buttons.length; i++)
+{
+    let button = buttons[i];
+    button.addEventListener('click', function() {
+        let formElement = button.closest('form');
+        if (formElement != null)
+        {
+            document.getElementById('invalid-feedback').classList.add('d-none');
+            button.setAttribute('disabled', 'disabled');
+            button.innerHTML = '<i id="fa-spinner" class="fal fa-spinner fa-spin mr-2"></i>'+button.innerHTML;
+
+            let formData = new FormData(formElement);
+            let httpRequest = new XMLHttpRequest();
+            httpRequest.onreadystatechange = function()
+            {
+                if (httpRequest.readyState === XMLHttpRequest.DONE)
+                {
+                    if (httpRequest.status === 200)
+                    {
+                        window.location = httpRequest.responseText;
+                    }
+                    else
+                    {
+                        document.getElementById('fa-spinner').remove();
+                        button.removeAttribute('disabled');
+                        document.getElementById('invalid-feedback').classList.remove('d-none');
+                        document.getElementById('invalid-feedback').innerHTML = httpRequest.responseText;
+                    }
+                }
+            }
+            httpRequest.open('POST', window.location);
+            httpRequest.send(formData);
+        }
+    });
+}
+</script></body></html>
