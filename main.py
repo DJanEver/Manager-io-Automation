@@ -182,7 +182,7 @@ def getEmpFromPayslip(key):
     value = fetchPayslipKey(key)
     data = dict(value.json())
     empData = dict(fetchEmpInfo(data.get("Employee")).json())
-    print(key)
+    print(empData)
     return empData
 
 
