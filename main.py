@@ -110,7 +110,10 @@ def populateDictionaries(keyTitle, supKey, key):
 
 
 def checkPayslipDate(payslipData):
-    payslipDate = payslipData.get("Date").split("-")
+    #payslipDate = payslipData.get("Date").split("-")
+    payslipDate = payslipData.get("Date")
+    print(payslipDate)
+    print(PAYROLL_DATE)
     currentDate = PAYROLL_DATE #datetime.date.today()
     year = PAYROLL_DATE.year #currentDate.year
     month = PAYROLL_DATE.month #currentDate.month
@@ -181,13 +184,7 @@ def returnPayslipData(key):
 def getEmpFromPayslip(key):
     value = fetchPayslipKey(key)
     data = dict(value.json())
-    print("Payslip Key")
-    print(key)
-    print("Payslip Employee")
-    print(data.get("employee"))
     empData = dict(fetchEmpInfo(data.get("employee")).json())
-    print("EmpData")
-    print(empData)
     return empData
 
 
