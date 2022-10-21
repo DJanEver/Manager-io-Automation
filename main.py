@@ -109,6 +109,15 @@ def populateDictionaries(keyTitle, supKey, key):
         return dataItemList
 
 
+def checkPayslipDate2(payslipData):
+    payslipMonth = datetime.datetime.strptime(payslipData.get("Date"),'%Y-%m-%d').replace(day=1, hour=0, minute=0, second=0, microsecond=0) 
+    currentMonth = PAYROLL_DATE.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    flag = False
+    if payslipMonth == currentMonth:
+        flag = True   
+    return flag
+    
+    
 def checkPayslipDate(payslipData):
     #payslipDate = payslipData.get("Date").split("-")
     payslipDate = payslipData.get("Date")
@@ -395,7 +404,7 @@ def returnPayslipKey(fileName):
         empData = getEmpFromPayslip(key)
         payslipData = returnPayslipData(key)
         # Check date here
-        if (checkPayslipDate(payslipData)):
+        if (checkPayslipDate2(payslipData)):
             createEmpJson(payslipData, empData, key)
             print("Task Completed")
 
