@@ -91,7 +91,7 @@ def populateDictionaries(keyTitle, supKey, key):
     value = fetchPayslipKey(key)
     data = dict(value.json())
     dataItemList = []
-    if (checkForItem("Employee", key)):
+    if (checkForItem("employee", key)):
         if (checkForItem(keyTitle, key)):
             for keyVal in data.get(keyTitle):
                 try:
