@@ -91,7 +91,7 @@ def populateDictionaries(keyTitle, supKey, key):
     value = fetchPayslipKey(key)
     data = dict(value.json())
     dataItemList = []
-    if (checkForItem("Employee", key)):
+    if (checkForItem("employee", key)):
         if (checkForItem(keyTitle, key)):
             for keyVal in data.get(keyTitle):
                 try:
@@ -109,8 +109,20 @@ def populateDictionaries(keyTitle, supKey, key):
         return dataItemList
 
 
+def checkPayslipDate2(payslipData):
+    payslipMonth = datetime.datetime.strptime(payslipData.get("Date"),'%Y-%m-%d').replace(day=1, hour=0, minute=0, second=0, microsecond=0) 
+    currentMonth = PAYROLL_DATE.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    flag = False
+    if payslipMonth == currentMonth:
+        flag = True   
+    return flag
+    
+    
 def checkPayslipDate(payslipData):
-    payslipDate = payslipData.get("Date").split("-")
+    #payslipDate = payslipData.get("Date").split("-")
+    payslipDate = payslipData.get("Date")
+    print(payslipDate)
+    print(PAYROLL_DATE)
     currentDate = PAYROLL_DATE #datetime.date.today()
     year = PAYROLL_DATE.year #currentDate.year
     month = PAYROLL_DATE.month #currentDate.month
@@ -157,7 +169,7 @@ def populateEmpDictionaries(keyTitle, supKey, key):
     value = fetchPayslipKey(key)
     data = dict(value.json())
     dataItemList = []
-    if (checkForItem("Employee", key)):
+    if (checkForItem("employee", key)):
         if (checkForItem(keyTitle, key)):
             for keyVal in data.get(keyTitle):
                 keyValJson = keyVal["Item"] + ".json"
@@ -181,15 +193,13 @@ def returnPayslipData(key):
 def getEmpFromPayslip(key):
     value = fetchPayslipKey(key)
     data = dict(value.json())
-    empData = dict(fetchEmpInfo(data.get("Employee")).json())
-    print(key)
+    empData = dict(fetchEmpInfo(data.get("employee")).json())
     return empData
 
 
 def createEmpJson(payslipData, empData, key):
     empEList = populateEmpDictionaries("Earnings", "UnitPrice", key)
     empDecList = populateDictionaries("Deductions", "DeductionAmount", key)
-
     #if (len(empEList) != 0 and len(empDecList) != 0):
     if (len(empEList) != 0):
         creatingPdf(empData, payslipData, calEmpGross("Earnings", "UnitPrice", key),
@@ -393,7 +403,7 @@ def returnPayslipKey(fileName):
         empData = getEmpFromPayslip(key)
         payslipData = returnPayslipData(key)
         # Check date here
-        if (checkPayslipDate(payslipData)):
+        if (checkPayslipDate2(payslipData)):
             createEmpJson(payslipData, empData, key)
             print("Task Completed")
 
