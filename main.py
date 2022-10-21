@@ -200,7 +200,8 @@ def getEmpFromPayslip(key):
 def createEmpJson(payslipData, empData, key):
     empEList = populateEmpDictionaries("Earnings", "UnitPrice", key)
     empDecList = populateDictionaries("Deductions", "DeductionAmount", key)
-
+    print("empEList")
+    print(empEList)
     #if (len(empEList) != 0 and len(empDecList) != 0):
     if (len(empEList) != 0):
         creatingPdf(empData, payslipData, calEmpGross("Earnings", "UnitPrice", key),
