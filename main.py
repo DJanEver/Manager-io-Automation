@@ -19,7 +19,7 @@ import sys
 API_LIST_FILENAME = "api-list.json"
 API_KEY_JSON = API_KEY + ".json"
 PAYSLIP_LIST_FILENAME = "payslip-list.json"
-PAYROLL_DATE=datetime.date.today()
+PAYROLL_DATE=datetime.datetime.today()
 
 
 def fetchApiList():
